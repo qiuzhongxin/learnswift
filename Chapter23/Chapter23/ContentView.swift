@@ -8,31 +8,56 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var currentTime: String = ""
+    @State var currentTime: String = "00:00:00"
+    @State var currenDate: String = "2024年10月19"
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
-                Text(currentTime)
-                    .font(.custom("BebasNeue", size: geometry.size.width > geometry.size.height ? 220 : 150)) // 根据方向调整字体大小
-                    .bold()
-                    .foregroundColor(.white)
-                    .onReceive(timer) { _ in
-                        currentTime = getCurrentTime()
-                    }
+        ZStack {
+            Color.black.edgesIgnoringSafeArea(.all)
+            VStack(alignment: .center){
+                
+                timeView
+                dateView
             }
+            //展示时间
+            .onAppear{
+                currentTime = getCurrentTime("HH:mm:ss")
+                currenDate = getCurrentTime("yyyy年MM月dd日")
+            }
+            //监听变化
+            .onReceive(timer) { _ in
+                currentTime = getCurrentTime("HH:mm:ss")
+                currenDate = getCurrentTime("yyyy年MM月dd日")
+            }
+            .padding(30)
         }
     }
+    private var timeView: some View {
+                Text(currentTime)
+                    .font(.custom("BebasNeue", size: 120)) // 根据方向调整字体大小
+                    .bold()
+                    .foregroundColor(.white)
+            
+        
+    }
+    private var dateView: some View {
+        Text(currenDate)
+            .font(.system(size: 28, design: .rounded))
+            .foregroundColor(.gray)
+            .bold()
+            
+    }
     
-    func getCurrentTime() -> String {
+    func getCurrentTime(_ time:String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss" // 这里也可以根据需要调整为 "HH:mm"
+        formatter.dateFormat = time // 这里也可以根据需要调整为 "HH:mm"
         return formatter.string(from: Date())
     }
+
 }
 
 #Preview {
     ContentView()
 }
+
