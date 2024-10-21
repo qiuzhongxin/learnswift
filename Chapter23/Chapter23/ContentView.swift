@@ -51,7 +51,7 @@ struct ContentView: View {
     
     func getCurrentTime(_ time:String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = time // 这里也可以根据需要调整为 "HH:mm"
+        formatter.dateFormat = time 
         return formatter.string(from: Date())
     }
 
