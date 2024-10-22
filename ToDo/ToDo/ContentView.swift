@@ -18,6 +18,7 @@ struct ContentView: View {
             .listRowSeparator(.hidden)
         }
         .listStyle(PlainListStyle())
+        InputTextField()
     }
     //点击完成事项
     func toggleToDoItemCompleted(_ todoItem: ToDoModel) {
@@ -41,6 +42,19 @@ struct ToDoListRow: View {
         .padding(.horizontal)
         .frame(height: 75)
         .background(Color(.systemGray6))
+    }
+}
+struct InputTextField: View {
+    @State var newToDoItem = ""
+    var body: some View {
+        HStack{
+            TextField("添加新事项", text: $newToDoItem)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 28))
+                .foregroundColor(.blue)
+        }
+        .padding()
     }
 }
 
