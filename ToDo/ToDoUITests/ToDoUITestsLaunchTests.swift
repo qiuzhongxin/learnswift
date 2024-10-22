@@ -1,13 +1,13 @@
 //
-//  Chapter26UITestsLaunchTests.swift
-//  Chapter26UITests
+//  ToDoUITestsLaunchTests.swift
+//  ToDoUITests
 //
-//  Created by Zhongxin qiu on 2024/10/21.
+//  Created by Zhongxin qiu on 2024/10/22.
 //
 
 import XCTest
 
-final class Chapter26UITestsLaunchTests: XCTestCase {
+final class ToDoUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
