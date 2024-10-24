@@ -3,42 +3,46 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State var todoItems: [ToDoModel] = [
-        ToDoModel(todoItem: "阅读1小时"),
-        ToDoModel(todoItem: "跑步5公里")
-    ]
+//    @State var todoItems: [ToDoModel] = [
+//        ToDoModel(todoItem: "阅读1小时"),
+//        ToDoModel(todoItem: "跑步5公里")
+//    ]
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Entity.id, ascending: true)],
+        animation: .default)
+    private var todoItems: FetchedResults<Entity>
     var body: some View {
         List {
             ForEach(todoItems) { todoItem in
                 ToDoListRow(todoItem: todoItem)
-                    .onTapGesture {
-                            toggleToDoItemCompleted(todoItem)
+//                    .onTapGesture {
+//                            toggleToDoItemCompleted(todoItem)
                         }
             }
             //滑动删除
-            .onDelete(perform: deleteToDoItem)
+//            .onDelete(perform: deleteToDoItem)
             .listRowSeparator(.hidden)
+        InputTextField()
         }
-        .listStyle(PlainListStyle())
-        
-        InputTextField(todoItems: $todoItems)
     }
     //点击完成事项
-    func toggleToDoItemCompleted(_ todoItem: ToDoModel) {
-        if let index = todoItems.firstIndex(where: {$0.id == todoItem.id} ) {
-            todoItems[index].isCompleted.toggle()
-        }
-    }
+//    func toggleToDoItemCompleted(_ todoItem: ToDoModel) {
+//        if let index = todoItems.firstIndex(where: {$0.id == todoItem.id} ) {
+//            todoItems[index].isCompleted.toggle()
+//        }
+//    }
     //删除事项方法
-    func deleteToDoItem(at offsets: IndexSet) {
-        todoItems.remove(atOffsets: offsets)
-    }
-}
+//    func deleteToDoItem(at offsets: IndexSet) {
+//        todoItems.remove(atOffsets: offsets)
+//    }
+//}
 struct ToDoListRow: View {
-    var todoItem: ToDoModel
+    var todoItem: Entity
     var body: some View {
         HStack{
-            Text(todoItem.todoItem)
+            Text(todoItem.todoItem!)//强制解包
                 .foregroundColor(todoItem.isCompleted ? .gray : .black)
                 .lineLimit(1)
                 .strikethrough(todoItem.isCompleted, color: .gray)//删除线
@@ -53,7 +57,7 @@ struct ToDoListRow: View {
 }
 struct InputTextField: View {
     @State var newToDoItem = ""
-    @Binding var todoItems: [ToDoModel]
+    @Environment(\.managedObjectContext) private var viewContext
     var body: some View {
         HStack{
             TextField("添加新事项", text: $newToDoItem)
@@ -70,7 +74,15 @@ struct InputTextField: View {
     //新增笔记的方法
     func addToDoItem() {
         if !newToDoItem.isEmpty {
-            todoItems.append(ToDoModel(todoItem: newToDoItem))
+            let newItem = Entity(context: viewContext)
+            newItem.id = UUID()
+            newItem.todoItem = newToDoItem
+            newItem.isCompleted = false
+            do {
+                try viewContext.save()
+            } catch{
+                print(error)
+            }
             newToDoItem = ""
         }
     }
