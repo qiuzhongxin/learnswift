@@ -5,4 +5,5 @@
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="todoItem" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="Entity1" representedClassName="Entity1" syncable="YES" codeGenerationType="class"/>
 </model>
