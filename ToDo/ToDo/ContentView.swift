@@ -3,10 +3,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-//    @State var todoItems: [ToDoModel] = [
-//        ToDoModel(todoItem: "阅读1小时"),
-//        ToDoModel(todoItem: "跑步5公里")
-//    ]
+
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
@@ -17,27 +14,49 @@ struct ContentView: View {
         List {
             ForEach(todoItems) { todoItem in
                 ToDoListRow(todoItem: todoItem)
-//                    .onTapGesture {
-//                            toggleToDoItemCompleted(todoItem)
+                    .onTapGesture {
+                        toggleToDoItemCompleted(itemId: todoItem.id!)
+                    }
+                //长按弹窗删除
+                    .contextMenu {
+                        Button("删除"){
+                            if let itemId = todoItem.id {
+                                deleteToDoItem(itemId: itemId)
+                            }
                         }
+                    }
+                }
             }
-            //滑动删除
-//            .onDelete(perform: deleteToDoItem)
+         
             .listRowSeparator(.hidden)
         InputTextField()
+            
+        }
+    //删除方法
+    func deleteToDoItem(itemId: UUID) {
+           if let deleteItem = todoItems.first(where: { $0.id == itemId }) {
+               viewContext.delete(deleteItem)
+               do {
+                   try viewContext.save()
+               } catch {
+                   print(error)
+               }
+           }
+       }
+    //点击完成事项方法
+    func toggleToDoItemCompleted(itemId: UUID){
+        guard let todoItem = todoItems.first (where: { $0.id == itemId}) else {return}
+        withAnimation{
+            todoItem.isCompleted.toggle()
+            do {
+                try viewContext.save()
+            } catch {
+                print(error)
+            }
         }
     }
-    //点击完成事项
-//    func toggleToDoItemCompleted(_ todoItem: ToDoModel) {
-//        if let index = todoItems.firstIndex(where: {$0.id == todoItem.id} ) {
-//            todoItems[index].isCompleted.toggle()
-//        }
-//    }
-    //删除事项方法
-//    func deleteToDoItem(at offsets: IndexSet) {
-//        todoItems.remove(atOffsets: offsets)
-//    }
-//}
+    }
+  
 struct ToDoListRow: View {
     var todoItem: Entity
     var body: some View {
